@@ -1,4 +1,4 @@
-import { PoolClient } from "pg";
+import { Client, PoolClient } from "pg";
 
 interface QueryResult {
   query: string;
@@ -51,4 +51,31 @@ export async function executeRawSqlQueries(
   }
 
   return results;
+}
+
+
+
+export const sqlQuery = async()=>{
+  const client = new Client({
+ connectionString:process.env.DATABASE_URL
+})
+await client.connect()
+
+  const pie_top_procurement = await client.query(`SELECT category, SUM(total_spent) AS TOTAL_SPENT FROM top_procurement_category
+GROUP BY category
+ORDER BY total_spent desc`)
+
+const Bar_top_items = await client.query(`SELECT item, SUM(total_spent) AS TOTAL_SPENT FROM top_item_total_spent
+GROUP BY item
+ORDER BY total_spent desc
+LIMIT 5`)
+
+const Bar_top_suppliers = await client.query(`SELECT supplier, SUM(total_spent) AS TOTAL_SPENT FROM top_supplier_total_spent
+GROUP BY supplier
+ORDER BY total_spent desc
+LIMIT 3`)
+
+  return {
+pie_top_procurement:pie_top_procurement.rows, Bar_top_items:Bar_top_items.rows, Bar_top_suppliers:Bar_top_suppliers.rows}
+   
 }

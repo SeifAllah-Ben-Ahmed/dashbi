@@ -44,7 +44,8 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ChartBarHorizontal() {
+export function ChartBarHorizontal({bartopsuppliers}:{bartopsuppliers:{ supplier:string , total_spent :string}[]
+}) {
   const [longestTick, setLongestTick] = useState("");
   const getYAxisTickWidth = (): number => {
     const charWidth = 9;
@@ -57,33 +58,32 @@ export function ChartBarHorizontal() {
     }
     return formattedTick;
   };
-
-  return (
+  
+   return (
     <Card>
       <CardHeader>
         <CardTitle>Bar Chart - Horizontal</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent >
         <ChartContainer config={chartConfig}>
           <BarChart
             accessibilityLayer
-            data={chartData}
+            data={bartopsuppliers}
             layout="vertical"
             margin={{
               left: -20,
             }}
           >
             <CartesianGrid horizontal={false} />
-            <XAxis type="number" dataKey="desktop" hide />
+            <XAxis type="number" dataKey="total_spent" hide />
             <YAxis
-              dataKey="month"
+              dataKey="supplier"
               type="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              //   tickFormatter={(value) => value.slice(0, 3)}
-              width={getYAxisTickWidth()}
+               width={getYAxisTickWidth()}
               tick={{ width: 250 }} // Most important part of whitespace formatting
               tickFormatter={tickFormatter}
             />
@@ -91,9 +91,9 @@ export function ChartBarHorizontal() {
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={5}>
+            <Bar dataKey="supplier" fill="var(--chart-2)" radius={5}>
               <LabelList
-                dataKey="desktop"
+                dataKey="total_spent"
                 position="right"
                 offset={8}
                 className="fill-foreground"
@@ -115,18 +115,32 @@ export function ChartBarHorizontal() {
   );
 }
 
-export function ChartBarLabelCustom() {
+export function ChartBarLabelCustom({barTopItems}:{barTopItems :{ item:string , total_spent :string}[]}) {
+
+    const [longestTick, setLongestTick] = useState("");
+  const getYAxisTickWidth = (): number => {
+    const charWidth = 9;
+    return longestTick.length * charWidth + 15;
+  };
+  const tickFormatter = (val: string): string => {
+    const formattedTick = val;
+    if (longestTick.length < formattedTick.length) {
+      setLongestTick(formattedTick);
+    }
+    return formattedTick;
+  };
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Bar Chart - Custom Label</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent  >
         <ChartContainer config={chartConfig}>
           <BarChart
             accessibilityLayer
-            data={chartData}
+            data={barTopItems}
             layout="vertical"
             margin={{
               right: 16,
@@ -134,7 +148,7 @@ export function ChartBarLabelCustom() {
           >
             <CartesianGrid horizontal={false} />
             <YAxis
-              dataKey="month"
+              dataKey="item"
               type="category"
               tickLine={false}
               tickMargin={10}
@@ -142,26 +156,26 @@ export function ChartBarLabelCustom() {
               tickFormatter={(value) => value.slice(0, 3)}
               hide
             />
-            <XAxis dataKey="desktop" type="number" hide />
+            <XAxis dataKey="total_spent" type="number" hide />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
             />
             <Bar
-              dataKey="desktop"
+              dataKey="total_spent"
               layout="vertical"
-              fill="var(--color-desktop)"
+              fill="var(--chart-5)"
               radius={4}
             >
               <LabelList
-                dataKey="month"
+                dataKey="item"
                 position="insideLeft"
                 offset={8}
                 className="fill-(--color-label)"
                 fontSize={12}
               />
               <LabelList
-                dataKey="desktop"
+                dataKey="total_spent"
                 position="right"
                 offset={8}
                 className="fill-foreground"
@@ -173,10 +187,10 @@ export function ChartBarLabelCustom() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Trending up by 5.2% this item <TrendingUp className="h-4 w-4" />
         </div>
         <div className="text-muted-foreground leading-none">
-          Showing total visitors for the last 6 months
+          Showing total visitors for the last 6 items
         </div>
       </CardFooter>
     </Card>

@@ -22,9 +22,12 @@ import ScatterCharts from "@/components/chats/scatter-chart";
 import { ChartRadialStacked } from "@/components/chats/chart-radial-stacked";
 import { ChartBarMultiple } from "@/components/chats/chart-bar-multiple";
 import { ChartBar } from "@/components/chats/chart-bar";
-import GridLayout from "./grid-layout";
-
-const Dashboard = () => {
+interface DashProps {
+barTopItems :{ item:string , total_spent :string}[]
+bartopsuppliers:{ supplier:string , total_spent :string}[]
+}
+ 
+const Dashboard = ({barTopItems,bartopsuppliers}:DashProps) => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -88,9 +91,9 @@ const Dashboard = () => {
             className="grid items-stretch gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3"
           >
             <>
+              <ChartBarLabelCustom barTopItems={barTopItems} />
+              <ChartBarHorizontal bartopsuppliers={bartopsuppliers} />
               <ChartPieDonutText />
-              <ChartBarHorizontal />
-              <ChartBarLabelCustom />
               <ChartLineLinear />
               <ChartRadialStacked />
               <ChartBarMultiple />
