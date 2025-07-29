@@ -1,5 +1,5 @@
 "use client";
-import { ChartPieDonutText } from "@/components/chats/pie-donut-chart";
+import { ChartPieDonutText } from "@/components/charts/pie-donut-chart";
 import { Card } from "@/components/ui/card";
 import React, { useState } from "react";
 

@@ -12,16 +12,16 @@ import {
   Search,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChartPieDonutText } from "@/components/chats/pie-donut-chart";
+import { ChartPieDonutText } from "@/components/charts/pie-donut-chart";
 import {
   ChartBarHorizontal,
   ChartBarLabelCustom,
-} from "@/components/chats/bar-horizontal-chart";
-import { ChartLineLinear } from "@/components/chats/chart-line-linear";
-import ScatterCharts from "@/components/chats/scatter-chart";
-import { ChartRadialStacked } from "@/components/chats/chart-radial-stacked";
-import { ChartBarMultiple } from "@/components/chats/chart-bar-multiple";
-import { ChartBar } from "@/components/chats/chart-bar";
+} from "@/components/charts/bar-horizontal-chart";
+import { ChartLineLinear } from "@/components/charts/chart-line-linear";
+import ScatterCharts from "@/components/charts/scatter-chart";
+import { ChartRadialStacked } from "@/components/charts/chart-radial-stacked";
+import { ChartBarMultiple } from "@/components/charts/chart-bar-multiple";
+import { ChartBar } from "@/components/charts/chart-bar";
 interface DashProps {
 barTopItems :{ item:string , total_spent :string}[]
 bartopsuppliers:{ supplier:string , total_spent :string}[]

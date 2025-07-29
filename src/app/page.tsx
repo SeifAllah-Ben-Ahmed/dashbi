@@ -1,7 +1,7 @@
-import { ChartPieDonutText } from "@/components/chats/pie-donut-chart";
+import { ChartPieDonutText } from "@/components/charts/pie-donut-chart";
 import Dashboard from "./dashboard";
 import pg, { Client } from 'pg'
-import { ChartPieSimple } from "@/components/chats/chart-pie-simple";
+import { ChartPieSimple } from "@/components/charts/chart-pie-simple";
 import { sqlQuery } from "@/utils/executeQueriesInBatches";
 
 export default async function Home() {

@@ -85,4 +85,4 @@ LIMIT 3`)
   return {
 pie_top_procurement:pie_top_procurement.rows, Bar_top_items:Bar_top_items.rows, Bar_top_suppliers:Bar_top_suppliers.rows}
    
-}
+} 
