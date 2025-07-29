@@ -60,12 +60,13 @@ export const sqlQuery = async()=>{
  connectionString:process.env.DATABASE_URL
 })
 await client.connect()
-//  Cards
+//  Cards (Ligne 1)
+// Spending STATS
+  const card_total_spent = await client.query(`SELECT 'Total Spent' AS com, SUM(total_spent) AS TOTAL_SPENT FROM spending_stats`)
+  const card_back_order = await client.query(`SELECT 'Back Order Amount' AS com, backorder_amnt FROM spending_stats LIMIT 1`)
+  const card_recieved_ninvoiced = await client.query(`SELECT 'Received not invoiced' AS com, received_not_invoiced FROM spending_stats LIMIT 1`)
 
-
-
-
-// chart 
+// chart (Ligne 2)
   const pie_top_procurement = await client.query(`SELECT category, SUM(total_spent) AS TOTAL_SPENT FROM top_procurement_category
 GROUP BY category
 ORDER BY total_spent desc`)
@@ -83,6 +84,14 @@ LIMIT 3`)
 
 
   return {
-pie_top_procurement:pie_top_procurement.rows, Bar_top_items:Bar_top_items.rows, Bar_top_suppliers:Bar_top_suppliers.rows}
+  pie_top_procurement:pie_top_procurement.rows, 
+  Bar_top_items:Bar_top_items.rows, 
+  Bar_top_suppliers:Bar_top_suppliers.rows,
+  card_total_spent:card_total_spent.rows,
+  card_back_order:card_back_order.rows,
+  card_recieved_ninvoiced:card_recieved_ninvoiced.rows
+
+
+  }
    
 } 
