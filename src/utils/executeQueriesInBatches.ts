@@ -81,6 +81,21 @@ GROUP BY supplier
 ORDER BY total_spent desc
 LIMIT 3`)
 
+//Table
+const Tab_mouvement = await client.query(`select 
+	date_imputation,
+	categorie,
+	article,
+	designation, 
+	Tiers,
+	CASE WHEN quantite_active > 0 AND operateur_creation != 'AHLEM' then
+		(quantite_us * prix_ordre) 
+	else 0 END AS Prix_Total,
+	montant_ordre
+from mouvement
+where tiers IS NOT NULL`)
+
+
 
 
   return {
@@ -89,8 +104,8 @@ LIMIT 3`)
   Bar_top_suppliers:Bar_top_suppliers.rows,
   card_total_spent:card_total_spent.rows,
   card_back_order:card_back_order.rows,
-  card_recieved_ninvoiced:card_recieved_ninvoiced.rows
-
+  card_recieved_ninvoiced:card_recieved_ninvoiced.rows,
+  Tab_mouvement:Tab_mouvement.rows
 
   }
    
