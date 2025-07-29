@@ -60,7 +60,12 @@ export const sqlQuery = async()=>{
  connectionString:process.env.DATABASE_URL
 })
 await client.connect()
+//  Cards
 
+
+
+
+// chart 
   const pie_top_procurement = await client.query(`SELECT category, SUM(total_spent) AS TOTAL_SPENT FROM top_procurement_category
 GROUP BY category
 ORDER BY total_spent desc`)
@@ -74,6 +79,8 @@ const Bar_top_suppliers = await client.query(`SELECT supplier, SUM(total_spent) 
 GROUP BY supplier
 ORDER BY total_spent desc
 LIMIT 3`)
+
+
 
   return {
 pie_top_procurement:pie_top_procurement.rows, Bar_top_items:Bar_top_items.rows, Bar_top_suppliers:Bar_top_suppliers.rows}
