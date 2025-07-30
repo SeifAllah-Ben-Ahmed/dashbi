@@ -49,56 +49,50 @@ export function ChartBarHorizontal({
   bartopsuppliers,
 }: {
   bartopsuppliers: {
-    supplier?: string;
-    category?: string;
+    supplier: string;
     total_spent: number;
   }[];
 }) {
   // Support both 'category' and 'supplier' keys for Y axis
-  const yKey =
-    bartopsuppliers && bartopsuppliers.length > 0
-      ? bartopsuppliers[0].category !== undefined
-        ? "category"
-        : "supplier"
-      : "supplier";
-  const longestTick = useMemo(() => {
-    if (!bartopsuppliers || bartopsuppliers.length === 0) return "";
-    return bartopsuppliers.reduce((max, curr) => {
-      const label = curr.category ?? curr.supplier ?? "";
-      return label.length > max.length ? label : max;
-    }, "");
-  }, [bartopsuppliers]);
 
-  const getYAxisTickWidth = () => {
-    const charWidth = 9;
-    if (!longestTick || typeof longestTick !== "string") return 50;
-    return longestTick.length * charWidth + 15;
-  };
+  console.log({ bartopsuppliers });
 
+  const maxItemLength = Math.max(
+    ...bartopsuppliers.map((item) => item?.supplier?.length)
+  );
+
+  const leftMargin = Math.max(100, maxItemLength * 8);
   return (
     <Card>
       <CardHeader>
         <CardTitle>Bar Chart - Horizontal</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardDescription> </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer
           config={{
-            [yKey]: {
-              label: yKey,
+            supplier: {
+              label: "supplier",
               color: "var(--chart-2)",
             },
           }}
         >
-          <BarChart accessibilityLayer data={bartopsuppliers} layout="vertical">
+          <BarChart
+            accessibilityLayer
+            data={bartopsuppliers}
+            layout="vertical"
+            margin={{
+              left: leftMargin / 2,
+            }}
+          >
             <CartesianGrid horizontal={false} />
             <YAxis
-              dataKey={yKey}
+              dataKey={"supplier"}
               type="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
+              // tickFormatter={(value) => value.slice(0, 3)}
               // hide
             />
             <XAxis type="number" dataKey="total_spent" hide />
@@ -114,13 +108,6 @@ export function ChartBarHorizontal({
                 className="fill-foreground"
                 fontSize={12}
               />
-              {/* <LabelList
-                dataKey="supplier"
-                position="left"
-                offset={8}
-                className="fill-(--color-label)"
-                fontSize={12}
-              /> */}
             </Bar>
           </BarChart>
         </ChartContainer>
@@ -142,19 +129,17 @@ export function ChartBarLabelCustom({
 }: {
   barTopItems: { item: string; total_spent: string }[];
 }) {
-  const [longestTick, setLongestTick] = useState("");
-  const getYAxisTickWidth = (): number => {
-    const charWidth = 9;
-    return longestTick.length * charWidth + 15;
-  };
-  const tickFormatter = (val: string): string => {
-    const formattedTick = val;
-    if (longestTick.length < formattedTick.length) {
-      setLongestTick(formattedTick);
-    }
-    return formattedTick;
-  };
+  const processedData = barTopItems.map((item) => ({
+    ...item,
+    total_spent: parseInt(item.total_spent, 10) || 0,
+  }));
 
+  // Calculate dynamic dimensions
+  const maxItemLength = (key: "total_spent" | "item") =>
+    Math.max(...barTopItems.map((item) => item?.[key].length));
+
+  const rightMargin = Math.max(100, maxItemLength("total_spent") * 8);
+  const leftMargin = Math.max(100, maxItemLength("item") * 8);
   return (
     <Card>
       <CardHeader>
@@ -164,11 +149,12 @@ export function ChartBarLabelCustom({
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart
-            accessibilityLayer
-            data={barTopItems}
+            data={processedData}
             layout="vertical"
             margin={{
-              right: 16,
+              bottom: 25,
+              right: rightMargin, // Space for value labels
+              left: 50,
             }}
           >
             <CartesianGrid horizontal={false} />
@@ -176,35 +162,23 @@ export function ChartBarLabelCustom({
               dataKey="item"
               type="category"
               tickLine={false}
-              tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
-              hide
+              tick={{ fontSize: 12, textAnchor: "end" }}
+              width={leftMargin / 2}
             />
             <XAxis dataKey="total_spent" type="number" hide />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
             />
-            <Bar
-              dataKey="total_spent"
-              layout="vertical"
-              fill="var(--chart-5)"
-              radius={4}
-            >
-              <LabelList
-                dataKey="item"
-                position="insideLeft"
-                offset={8}
-                className="fill-(--color-label)"
-                fontSize={12}
-              />
+            <Bar dataKey="total_spent" fill="var(--chart-5)" radius={4}>
               <LabelList
                 dataKey="total_spent"
                 position="right"
                 offset={8}
                 className="fill-foreground"
                 fontSize={12}
+                formatter={(value: string) => `${value}`}
               />
             </Bar>
           </BarChart>

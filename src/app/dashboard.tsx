@@ -110,6 +110,11 @@ const Dashboard = ({
                   }}
                 />
               </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="mt-0">
+            <div className="grid items-stretch gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
               <ChartPieDonutText />
               <ChartLineLinear />
               <ChartRadialStacked />
@@ -118,8 +123,6 @@ const Dashboard = ({
               <ScatterCharts />
             </div>
           </TabsContent>
-
-          <TabsContent value="analytics" className="mt-0"></TabsContent>
         </main>
       </Tabs>
     </div>
