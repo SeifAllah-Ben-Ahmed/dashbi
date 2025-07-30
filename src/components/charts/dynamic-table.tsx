@@ -10,10 +10,12 @@ import React, {
 import {
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Card, CardContent, CardFooter } from "../ui/card";
 
 interface DynamicTableProps {
   data: Record<string, string>[];
@@ -112,8 +114,8 @@ export const DynamicTable = ({ data = [] }: DynamicTableProps) => {
   const offsetY = visibleRange.startIndex * ROW_HEIGHT;
 
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-      <div
+    <Card className="overflow-hidden">
+      <CardContent
         ref={containerRef}
         className="h-[500px] overflow-auto"
         onScroll={handleScroll}
@@ -130,15 +132,10 @@ export const DynamicTable = ({ data = [] }: DynamicTableProps) => {
             }}
           >
             <Table ref={tableRef}>
-              <TableHeader className="sticky top-0 bg-white z-10">
+              <TableHeader>
                 <TableRow>
                   {headers.map((header) => (
-                    <TableHead
-                      key={header.key}
-                      className="max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap bg-white"
-                    >
-                      {header.label}
-                    </TableHead>
+                    <TableHead key={header.key}>{header.label}</TableHead>
                   ))}
                 </TableRow>
               </TableHeader>
@@ -149,16 +146,12 @@ export const DynamicTable = ({ data = [] }: DynamicTableProps) => {
                   return (
                     <TableRow
                       key={row.id || actualIndex}
-                      className="hover:bg-gray-50 transition-colors duration-150"
                       style={{ height: ROW_HEIGHT }}
                     >
                       {headers.map((header) => (
-                        <td
-                          key={header.key}
-                          className="px-4 py-2 text-sm text-gray-900 whitespace-nowrap"
-                        >
+                        <TableCell key={header.key}>
                           {formatCellValue(row[header.key], header.key)}
-                        </td>
+                        </TableCell>
                       ))}
                     </TableRow>
                   );
@@ -167,14 +160,14 @@ export const DynamicTable = ({ data = [] }: DynamicTableProps) => {
             </Table>
           </div>
         </div>
-      </div>
+      </CardContent>
 
       {/* Status indicator */}
-      <div className="px-4 py-2 text-xs text-gray-500 bg-gray-50 border-t">
+      <CardFooter className="px-4 py-2 text-xs text-gray-500 bg-gray-50 border-t">
         Affichage {visibleRange.startIndex + 1}-
         {Math.min(visibleRange.endIndex + 1, data.length)} sur {data.length}{" "}
         lignes
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 };

@@ -1,5 +1,5 @@
 "use client";
-import { BarChart3 } from "lucide-react";
+import { BarChart3, TrendingUp } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartPieDonutText } from "@/components/charts/pie-donut-chart";
 import {
@@ -36,7 +36,6 @@ const Dashboard = ({
   card_recieved_ninvoiced,
   card_total_spent,
 }: DashProps) => {
-  console.log({ card_full_delivery, card_on_time_delivery });
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -65,14 +64,13 @@ const Dashboard = ({
                 <BarChart3 className="h-4 w-4" />
                 <span>Overview</span>
               </TabsTrigger>
-              {/* <TabsTrigger
+              <TabsTrigger
                 value="analytics"
                 className="py-4 px-1 border-b-2 border-transparent font-medium text-sm flex items-center space-x-2 transition-colors data-[state=active]:border-blue-500 data-[state=active]:text-blue-600 data-[state=inactive]:text-gray-500 hover:text-gray-700 bg-transparent shadow-none"
               >
                 <TrendingUp className="h-4 w-4" />
                 <span>Analytics</span>
               </TabsTrigger>
-*/}
             </TabsList>
           </div>
         </div>
@@ -101,13 +99,17 @@ const Dashboard = ({
                   }))}
                 />
               )}
-              <DynamicTable data={Tab_mouvement} />
-              <SectionCards
-                data={{
-                  card_full_delivery,
-                  card_on_time_delivery,
-                }}
-              />
+              <div className="col-span-2">
+                <DynamicTable data={Tab_mouvement} />
+              </div>
+              <div className="grid gap-10 md:gap-6 self-start">
+                <SectionCards
+                  data={{
+                    card_full_delivery,
+                    card_on_time_delivery,
+                  }}
+                />
+              </div>
               <ChartPieDonutText />
               <ChartLineLinear />
               <ChartRadialStacked />
@@ -117,12 +119,7 @@ const Dashboard = ({
             </div>
           </TabsContent>
 
-          {/* <TabsContent value="analytics" className="mt-0">
-            {analyticsContent}
-          </TabsContent>
-
-    
-		  */}
+          <TabsContent value="analytics" className="mt-0"></TabsContent>
         </main>
       </Tabs>
     </div>
