@@ -145,7 +145,7 @@ WHERE (tiers IS NOT NULL) ${filtre_fournisseur}`)
     await client.query(`select raison_social from fournisseur LIMIT 10`);
 console.log({flt_year:flt_year.rows,
 flt_frs:flt_frs.rows});
-  return {
+  const res = {
   pie_top_procurement:pie_top_procurement.rows, 
   Bar_top_items:Bar_top_items.rows, 
   Bar_top_suppliers:Bar_top_suppliers.rows,
@@ -159,5 +159,6 @@ flt_frs:flt_frs.rows});
   card_Returned_Amount:card_Returned_Amount.rows,
   card_Return_total:card_Return_total.rows
   }
-   
+   client.end();
+   return res;
 } 
