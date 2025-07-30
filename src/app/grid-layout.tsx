@@ -1,32 +1,11 @@
 "use client";
 import React from "react";
-import dynamic from "next/dynamic";
-
-const ChartBarHorizontal = dynamic(
-  () =>
-    import("@/components/charts/bar-horizontal-chart").then(
-      (m) => m.ChartBarHorizontal
-    ),
-  { loading: () => <div>Loading...</div>, ssr: false }
-);
-const ChartBarLabelCustom = dynamic(
-  () =>
-    import("@/components/charts/bar-horizontal-chart").then(
-      (m) => m.ChartBarLabelCustom
-    ),
-  { loading: () => <div>Loading...</div>, ssr: false }
-);
-const ChartPieSimple = dynamic(
-  () =>
-    import("@/components/charts/chart-pie-simple").then(
-      (m) => m.ChartPieSimple
-    ),
-  { loading: () => <div>Loading...</div>, ssr: false }
-);
-const DynamicTable = dynamic(
-  () => import("@/components/charts/dynamic-table").then((m) => m.DynamicTable),
-  { loading: () => <div>Loading...</div>, ssr: false }
-);
+import {
+  ChartBarHorizontal,
+  ChartBarLabelCustom,
+} from "@/components/charts/bar-horizontal-chart";
+import { ChartPieSimple } from "@/components/charts/chart-pie-simple";
+import { DynamicTable } from "@/components/charts/dynamic-table";
 import {
   Card,
   CardDescription,
