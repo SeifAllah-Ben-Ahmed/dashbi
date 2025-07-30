@@ -121,7 +121,6 @@ LIMIT 3`);
 
 //Ligne 3
 //Table
-
 const Tab_mouvement = await client.query(`select 
 	date_imputation,
 	categorie,
@@ -136,7 +135,33 @@ from mouvement m
 JOIN fournisseur f ON f.Id_Fournisseur = m.Tiers
 WHERE (tiers IS NOT NULL) ${filtre_fournisseur}`)
 
+//Prix budget vs prix unitaire
+const area_prix_budget = await client.query(`SELECT 
+    DATE_TRUNC('month', m.date_imputation) AS month_start,
+    SUM(
+        CASE 
+            WHEN m.quantite_active > 0 AND m.operateur_creation != 'AHLEM' 
+            THEN m.quantite_us * m.prix_ordre
+            ELSE 0 
+        END
+    ) AS Prix_Total,
+    SUM(
+        CASE 
+            WHEN m.quantite_active > 0 AND m.operateur_creation != 'AHLEM' 
+            THEN m.quantite_us * b.prix_calcule
+            ELSE 0 
+        END
+    ) AS Prix_budget
+FROM mouvement m
+JOIN fournisseur f ON f.Id_Fournisseur = m.Tiers
+JOIN budget_article b ON b.id_article = m.article
+WHERE m.tiers IS NOT NULL
+GROUP BY DATE_TRUNC('month', m.date_imputation) ${filtre_year}`)
+
 //PAGE2
+
+
+
 
   const flt_year =
     await client.query(`select distinct(year) from top_supplier_total_spent`);
@@ -157,7 +182,9 @@ flt_frs:flt_frs.rows});
   card_full_delivery:card_full_delivery.rows,
   card_Returned_Qty:card_Returned_Qty.rows,
   card_Returned_Amount:card_Returned_Amount.rows,
-  card_Return_total:card_Return_total.rows
+  card_Return_total:card_Return_total.rows,
+  area_prix_budget:area_prix_budget.rows
+
   }
    client.end();
    return res;
