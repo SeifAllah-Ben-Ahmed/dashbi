@@ -71,7 +71,12 @@ await client.connect()
   const card_full_delivery = await client.query(`select 'Full Delivery' AS com, ROUND((Sum(otif)/count(*)) *100,2) ||'%' AS OTD_Fournisseur from delivery_performance`)
   const card_on_time_delivery = await client.query(`select 'On-Time Delivery' AS com, ROUND((Sum(otd_fournisseur)/count(*)) *100,2) ||'%' AS OTD_Fournisseur from delivery_performance`)
   
-
+//Quality
+  const card_Returned_Qty = await client.query(`select 'Returned Qty' AS com, sum(returned_qty)/count(*) AS Returned_qty from quality`)
+  const card_Returned_Amount = await client.query(`select 'Returned Amount' AS com, sum(retourned_amnt)/count(*) AS Retourned_amnt from quality`)
+  const card_Return_total = await client.query(`select 'Return % of Total' AS com, sum(retourned_amnt)/sum(returned_qty) ||'%' AS Retourned_amnt from quality`)
+  
+  
 
 // chart (Ligne 2)
   const pie_top_procurement = await client.query(`SELECT category, SUM(total_spent) AS TOTAL_SPENT FROM top_procurement_category
@@ -88,19 +93,21 @@ GROUP BY supplier
 ORDER BY total_spent desc
 LIMIT 3`)
 
+//Ligne 3
 //Table
 const Tab_mouvement = await client.query(`select 
 	date_imputation,
 	categorie,
 	article,
 	designation, 
-	Tiers,
+	f.raison_social,
 	CASE WHEN quantite_active > 0 AND operateur_creation != 'AHLEM' then
 		(quantite_us * prix_ordre) 
 	else 0 END AS Prix_Total,
 	montant_ordre
-from mouvement
-where tiers IS NOT NULL`)
+from mouvement m
+JOIN fournisseur f ON f.Id_Fournisseur = m.Tiers
+WHERE tiers IS NOT NULL`)
 
 //PAGE2
 
@@ -117,7 +124,10 @@ where tiers IS NOT NULL`)
   card_recieved_ninvoiced:card_recieved_ninvoiced.rows,
   Tab_mouvement:Tab_mouvement.rows,
   card_on_time_delivery:card_on_time_delivery.rows,
-  card_full_delivery:card_full_delivery.rows
+  card_full_delivery:card_full_delivery.rows,
+  card_Returned_Qty:card_Returned_Qty.rows,
+  card_Returned_Amount:card_Returned_Amount.rows,
+  card_Return_total:card_Return_total.rows
 
 
   }
