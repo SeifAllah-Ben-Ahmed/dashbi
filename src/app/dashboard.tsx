@@ -1,16 +1,5 @@
 "use client";
-import {
-  BarChart3,
-  Users,
-  TrendingUp,
-  DollarSign,
-  Settings,
-  Activity,
-  Calendar,
-  FileText,
-  Bell,
-  Search,
-} from "lucide-react";
+import { BarChart3, TrendingUp } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartPieDonutText } from "@/components/charts/pie-donut-chart";
 import {
@@ -22,12 +11,32 @@ import ScatterCharts from "@/components/charts/scatter-chart";
 import { ChartRadialStacked } from "@/components/charts/chart-radial-stacked";
 import { ChartBarMultiple } from "@/components/charts/chart-bar-multiple";
 import { ChartBar } from "@/components/charts/chart-bar";
+import { SectionCards } from "@/components/section-cards";
+import { ChartPieSimple } from "@/components/charts/chart-pie-simple";
+import { DynamicTable } from "@/components/charts/dynamic-table";
+
 interface DashProps {
-barTopItems :{ item:string , total_spent :string}[]
-bartopsuppliers:{ supplier:string , total_spent :string}[]
+  barTopItems: { item: string; total_spent: string }[];
+  bartopsuppliers: { supplier: string; total_spent: string }[];
+  pie_top_procurement: { category: string; total_spent: string }[];
+  Tab_mouvement: Record<string, Date | string | number>[];
+  card_full_delivery: { com: string; otd_fournisseur: string }[];
+  card_on_time_delivery: { com: string; otd_fournisseur: string }[];
+  card_back_order: { com: string; backorder_amnt: number }[];
+  card_recieved_ninvoiced: { com: string; received_not_invoiced: number }[];
+  card_total_spent: { com: string; total_spent: string }[];
 }
- 
-const Dashboard = ({barTopItems,bartopsuppliers}:DashProps) => {
+const Dashboard = ({
+  barTopItems,
+  bartopsuppliers,
+  pie_top_procurement,
+  Tab_mouvement,
+  card_back_order,
+  card_full_delivery,
+  card_on_time_delivery,
+  card_recieved_ninvoiced,
+  card_total_spent,
+}: DashProps) => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -39,22 +48,6 @@ const Dashboard = ({barTopItems,bartopsuppliers}:DashProps) => {
               <p className="text-sm text-gray-600">
                 Welcome back! Here&apos;s what&apos;s happening today.
               </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <button className="p-2 text-gray-400 hover:text-gray-600">
-                <Bell className="h-5 w-5" />
-              </button>
-              <button className="p-2 text-gray-400 hover:text-gray-600">
-                <Calendar className="h-5 w-5" />
-              </button>
             </div>
           </div>
         </div>
@@ -72,42 +65,65 @@ const Dashboard = ({barTopItems,bartopsuppliers}:DashProps) => {
                 <BarChart3 className="h-4 w-4" />
                 <span>Overview</span>
               </TabsTrigger>
-              {/* <TabsTrigger
+              <TabsTrigger
                 value="analytics"
                 className="py-4 px-1 border-b-2 border-transparent font-medium text-sm flex items-center space-x-2 transition-colors data-[state=active]:border-blue-500 data-[state=active]:text-blue-600 data-[state=inactive]:text-gray-500 hover:text-gray-700 bg-transparent shadow-none"
               >
                 <TrendingUp className="h-4 w-4" />
                 <span>Analytics</span>
               </TabsTrigger>
-*/}
             </TabsList>
           </div>
         </div>
 
         {/* Main Content */}
-        <main className="px-6 py-8">
-          <TabsContent
-            value="overview"
-            className="grid items-stretch gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3"
-          >
-            <>
+        <main className="px-6">
+          <TabsContent value="overview">
+            <div className="grid items-stretch gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
+              <SectionCards
+                data={{
+                  card_total_spent,
+                  card_back_order,
+                  card_recieved_ninvoiced,
+                }}
+              />
               <ChartBarLabelCustom barTopItems={barTopItems} />
-              <ChartBarHorizontal bartopsuppliers={bartopsuppliers} />
+              {pie_top_procurement && (
+                <ChartPieSimple data={pie_top_procurement} />
+              )}
+
+              {bartopsuppliers && (
+                <ChartBarHorizontal
+                  bartopsuppliers={bartopsuppliers?.map((item) => ({
+                    supplier: item.supplier,
+                    total_spent: Number(item.total_spent),
+                  }))}
+                />
+              )}
+              <div className="col-span-2">
+                <DynamicTable data={Tab_mouvement} />
+              </div>
+              <div className="grid gap-10 md:gap-6 self-start">
+                <SectionCards
+                  data={{
+                    card_full_delivery,
+                    card_on_time_delivery,
+                  }}
+                />
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="mt-0">
+            <div className="grid items-stretch gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
               <ChartPieDonutText />
               <ChartLineLinear />
               <ChartRadialStacked />
               <ChartBarMultiple />
               <ChartBar />
               <ScatterCharts />
-            </>
+            </div>
           </TabsContent>
-
-          {/* <TabsContent value="analytics" className="mt-0">
-            {analyticsContent}
-          </TabsContent>
-
-    
-		  */}
         </main>
       </Tabs>
     </div>

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { TrendingUp } from "lucide-react"
-import { Cell, Pie, PieChart } from "recharts"
+import { TrendingUp } from "lucide-react";
+import { Cell, Pie, PieChart } from "recharts";
 
 import {
   Card,
@@ -10,44 +10,42 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 
-export const description = "A simple pie chart"
+export const description = "A simple pie chart";
 
- 
+export function ChartPieSimple({
+  data,
+}: {
+  data: { category: string; total_spent: string }[];
+}) {
+  const chartConfig = {
+    total_spent: {
+      label: "total_spent",
+    },
+    Accessoire: {
+      label: "Accessoire",
+      color: "var(--chart-1)",
+    },
+    Matière_1ère: {
+      label: "Matière 1ère",
+      color: "var(--chart-2)",
+    },
+  } satisfies ChartConfig;
 
-
-export function ChartPieSimple({data}:{data:{category:string,total_spent:string}[]}) {
-
- 
-const chartConfig = {
-  total_spent: {
-    label: "total_spent",
-  },
-   "Accessoire": {
-    label: "Accessoire",
-    color: "var(--chart-1)",
-  },
-  "Matière_1ère": {
-    label: "Matière 1ère",
-    color: "var(--chart-2)",
-  },
-  
- } satisfies ChartConfig
-
-  const dataChart = data.map((item)=>({
-    category: item.category.split(' ').join("_"),
+  const dataChart = data.map((item) => ({
+    category: item.category.split(" ").join("_"),
     total_spent: Number(item.total_spent),
-    fill:`var(--color-${item.category.split(' ').join("_")})`
-  }))
+    fill: `var(--color-${item.category.split(" ").join("_")})`,
+  }));
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col h-full w-full">
       <CardHeader className="items-center pb-0">
         <CardTitle>Top 5 items</CardTitle>
         <CardDescription></CardDescription>
@@ -62,10 +60,13 @@ const chartConfig = {
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Pie data={dataChart} dataKey="total_spent" nameKey="category" >
-                 {data.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={`var(--chart-${index+1})`} />
-        ))}
+            <Pie data={dataChart} dataKey="total_spent" nameKey="category">
+              {data.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={`var(--chart-${index + 1})`}
+                />
+              ))}
             </Pie>
           </PieChart>
         </ChartContainer>
@@ -79,5 +80,5 @@ const chartConfig = {
         </div>
       </CardFooter>
     </Card>
-  )
+  );
 }

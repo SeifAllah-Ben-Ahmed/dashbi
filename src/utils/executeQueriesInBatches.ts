@@ -53,19 +53,25 @@ export async function executeRawSqlQueries(
   return results;
 }
 
-
-
-export const sqlQuery = async()=>{
+let data;
+export const sqlQuery = async () => {
+  if (data) return data;
   const client = new Client({
- connectionString:process.env.DATABASE_URL
-})
-await client.connect()
-//PAGE1
-//  Cards (Ligne 1)
-// Spending STATS
-  const card_total_spent = await client.query(`SELECT 'Total Spent' AS com, SUM(total_spent) AS TOTAL_SPENT FROM spending_stats`)
-  const card_back_order = await client.query(`SELECT 'Back Order Amount' AS com, backorder_amnt FROM spending_stats LIMIT 1`)
-  const card_recieved_ninvoiced = await client.query(`SELECT 'Received not invoiced' AS com, received_not_invoiced FROM spending_stats LIMIT 1`)
+    connectionString: process.env.DATABASE_URL,
+  });
+  await client.connect();
+  //PAGE1
+  //  Cards (Ligne 1)
+  // Spending STATS
+  const card_total_spent = await client.query(
+    `SELECT 'Total Spent' AS com, SUM(total_spent) AS TOTAL_SPENT FROM spending_stats`
+  );
+  const card_back_order = await client.query(
+    `SELECT 'Back Order Amount' AS com, backorder_amnt FROM spending_stats LIMIT 1`
+  );
+  const card_recieved_ninvoiced = await client.query(
+    `SELECT 'Received not invoiced' AS com, received_not_invoiced FROM spending_stats LIMIT 1`
+  );
 
 // DELIVERY PERFORMANCE
   const card_full_delivery = await client.query(`select 'Full Delivery' AS com, ROUND((Sum(otif)/count(*)) *100,2) ||'%' AS OTD_Fournisseur from delivery_performance`)
@@ -78,20 +84,23 @@ await client.connect()
   
   
 
-// chart (Ligne 2)
-  const pie_top_procurement = await client.query(`SELECT category, SUM(total_spent) AS TOTAL_SPENT FROM top_procurement_category
+  // chart (Ligne 2)
+  const pie_top_procurement =
+    await client.query(`SELECT category, SUM(total_spent) AS TOTAL_SPENT FROM top_procurement_category
 GROUP BY category
-ORDER BY total_spent desc`)
+ORDER BY total_spent desc`);
 
-const Bar_top_items = await client.query(`SELECT item, SUM(total_spent) AS TOTAL_SPENT FROM top_item_total_spent
+  const Bar_top_items =
+    await client.query(`SELECT item, SUM(total_spent) AS TOTAL_SPENT FROM top_item_total_spent
 GROUP BY item
 ORDER BY total_spent desc
-LIMIT 5`)
+LIMIT 5`);
 
-const Bar_top_suppliers = await client.query(`SELECT supplier, SUM(total_spent) AS TOTAL_SPENT FROM top_supplier_total_spent
+  const Bar_top_suppliers =
+    await client.query(`SELECT supplier, SUM(total_spent) AS TOTAL_SPENT FROM top_supplier_total_spent
 GROUP BY supplier
 ORDER BY total_spent desc
-LIMIT 3`)
+LIMIT 3`);
 
 //Ligne 3
 //Table
@@ -124,10 +133,7 @@ WHERE tiers IS NOT NULL`)
   card_recieved_ninvoiced:card_recieved_ninvoiced.rows,
   Tab_mouvement:Tab_mouvement.rows,
   card_on_time_delivery:card_on_time_delivery.rows,
-  card_full_delivery:card_full_delivery.rows,
-  card_Returned_Qty:card_Returned_Qty.rows,
-  card_Returned_Amount:card_Returned_Amount.rows,
-  card_Return_total:card_Return_total.rows
+  card_full_delivery:card_full_delivery.rows
 
 
   }

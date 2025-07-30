@@ -8,6 +8,7 @@ import {
   YAxis,
   CartesianGrid,
   LabelList,
+  ResponsiveContainer,
 } from "recharts";
 
 import {
@@ -24,7 +25,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { cn } from "@/lib/utils";
 
 export const description = "A horizontal bar chart";
 
@@ -44,57 +46,61 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ChartBarHorizontal({bartopsuppliers}:{bartopsuppliers:{ supplier:string , total_spent :string}[]
+export function ChartBarHorizontal({
+  bartopsuppliers,
+}: {
+  bartopsuppliers: {
+    supplier: string;
+    total_spent: number;
+  }[];
 }) {
-  const [longestTick, setLongestTick] = useState("");
-  const getYAxisTickWidth = (): number => {
-    const charWidth = 9;
-    return longestTick.length * charWidth + 15;
-  };
-  const tickFormatter = (val: string): string => {
-    const formattedTick = val;
-    if (longestTick.length < formattedTick.length) {
-      setLongestTick(formattedTick);
-    }
-    return formattedTick;
-  };
-  
-   return (
-    <Card>
+  const maxItemLength = Math.max(
+    ...bartopsuppliers.map((item) => item?.supplier?.length)
+  );
+
+  const leftMargin = Math.max(100, maxItemLength * 8);
+  return (
+    <Card className="h-full w-full">
       <CardHeader>
         <CardTitle>Bar Chart - Horizontal</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardDescription> </CardDescription>
       </CardHeader>
-      <CardContent >
-        <ChartContainer config={chartConfig}>
+      <CardContent>
+        <ChartContainer
+          config={{
+            supplier: {
+              label: "supplier",
+              color: "var(--chart-2)",
+            },
+          }}
+        >
           <BarChart
             accessibilityLayer
             data={bartopsuppliers}
             layout="vertical"
             margin={{
-              left: -20,
+              left: leftMargin / 2,
             }}
           >
             <CartesianGrid horizontal={false} />
-            <XAxis type="number" dataKey="total_spent" hide />
             <YAxis
-              dataKey="supplier"
+              dataKey={"supplier"}
               type="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-               width={getYAxisTickWidth()}
-              tick={{ width: 250 }} // Most important part of whitespace formatting
-              tickFormatter={tickFormatter}
+              // tickFormatter={(value) => value.slice(0, 3)}
+              // hide
             />
+            <XAxis type="number" dataKey="total_spent" hide />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={<ChartTooltipContent indicator="line" />}
             />
-            <Bar dataKey="supplier" fill="var(--chart-2)" radius={5}>
+            <Bar dataKey="total_spent" fill="var(--chart-2)" radius={4}>
               <LabelList
                 dataKey="total_spent"
-                position="right"
+                position="end"
                 offset={8}
                 className="fill-foreground"
                 fontSize={12}
@@ -115,35 +121,39 @@ export function ChartBarHorizontal({bartopsuppliers}:{bartopsuppliers:{ supplier
   );
 }
 
-export function ChartBarLabelCustom({barTopItems}:{barTopItems :{ item:string , total_spent :string}[]}) {
+export function ChartBarLabelCustom({
+  barTopItems,
+  className = "",
+}: {
+  barTopItems: { item: string; total_spent: string }[];
+  className?: string;
+}) {
+  const processedData = barTopItems.map((item) => ({
+    ...item,
+    total_spent: parseInt(item.total_spent, 10) || 0,
+  }));
 
-    const [longestTick, setLongestTick] = useState("");
-  const getYAxisTickWidth = (): number => {
-    const charWidth = 9;
-    return longestTick.length * charWidth + 15;
-  };
-  const tickFormatter = (val: string): string => {
-    const formattedTick = val;
-    if (longestTick.length < formattedTick.length) {
-      setLongestTick(formattedTick);
-    }
-    return formattedTick;
-  };
+  // Calculate dynamic dimensions
+  const maxItemLength = (key: "total_spent" | "item") =>
+    Math.max(...barTopItems.map((item) => item?.[key].length));
 
+  const rightMargin = Math.max(100, maxItemLength("total_spent") * 8);
+  const leftMargin = Math.max(100, maxItemLength("item") * 8);
   return (
-    <Card>
+    <Card className={cn("h-full w-full", className)}>
       <CardHeader>
         <CardTitle>Bar Chart - Custom Label</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
-      <CardContent  >
+      <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart
-            accessibilityLayer
-            data={barTopItems}
+            data={processedData}
             layout="vertical"
             margin={{
-              right: 16,
+              bottom: 25,
+              right: rightMargin, // Space for value labels
+              left: 50,
             }}
           >
             <CartesianGrid horizontal={false} />
@@ -151,35 +161,23 @@ export function ChartBarLabelCustom({barTopItems}:{barTopItems :{ item:string , 
               dataKey="item"
               type="category"
               tickLine={false}
-              tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
-              hide
+              tick={{ fontSize: 12, textAnchor: "end" }}
+              width={leftMargin / 2}
             />
             <XAxis dataKey="total_spent" type="number" hide />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
             />
-            <Bar
-              dataKey="total_spent"
-              layout="vertical"
-              fill="var(--chart-5)"
-              radius={4}
-            >
-              <LabelList
-                dataKey="item"
-                position="insideLeft"
-                offset={8}
-                className="fill-(--color-label)"
-                fontSize={12}
-              />
+            <Bar dataKey="total_spent" fill="var(--chart-5)" radius={4}>
               <LabelList
                 dataKey="total_spent"
                 position="right"
                 offset={8}
                 className="fill-foreground"
                 fontSize={12}
+                formatter={(value: string) => `${value}`}
               />
             </Bar>
           </BarChart>
