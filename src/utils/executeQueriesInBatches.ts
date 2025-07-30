@@ -60,11 +60,18 @@ export const sqlQuery = async()=>{
  connectionString:process.env.DATABASE_URL
 })
 await client.connect()
+//PAGE1
 //  Cards (Ligne 1)
 // Spending STATS
   const card_total_spent = await client.query(`SELECT 'Total Spent' AS com, SUM(total_spent) AS TOTAL_SPENT FROM spending_stats`)
   const card_back_order = await client.query(`SELECT 'Back Order Amount' AS com, backorder_amnt FROM spending_stats LIMIT 1`)
   const card_recieved_ninvoiced = await client.query(`SELECT 'Received not invoiced' AS com, received_not_invoiced FROM spending_stats LIMIT 1`)
+
+// DELIVERY PERFORMANCE
+  const card_full_delivery = await client.query(`select 'Full Delivery' AS com, ROUND((Sum(otif)/count(*)) *100,2) ||'%' AS OTD_Fournisseur from delivery_performance`)
+  const card_on_time_delivery = await client.query(`select 'On-Time Delivery' AS com, ROUND((Sum(otd_fournisseur)/count(*)) *100,2) ||'%' AS OTD_Fournisseur from delivery_performance`)
+  
+
 
 // chart (Ligne 2)
   const pie_top_procurement = await client.query(`SELECT category, SUM(total_spent) AS TOTAL_SPENT FROM top_procurement_category
@@ -95,6 +102,9 @@ const Tab_mouvement = await client.query(`select
 from mouvement
 where tiers IS NOT NULL`)
 
+//PAGE2
+
+
 
 
 
@@ -105,7 +115,10 @@ where tiers IS NOT NULL`)
   card_total_spent:card_total_spent.rows,
   card_back_order:card_back_order.rows,
   card_recieved_ninvoiced:card_recieved_ninvoiced.rows,
-  Tab_mouvement:Tab_mouvement.rows
+  Tab_mouvement:Tab_mouvement.rows,
+  card_on_time_delivery:card_on_time_delivery.rows,
+  card_full_delivery:card_full_delivery.rows
+
 
   }
    

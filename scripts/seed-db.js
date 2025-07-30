@@ -40,14 +40,18 @@ const restore = spawn(
   [
     "-h",
     remote.host,
-    "-U",
+    "-p", remote.port || "5432",       // ✅ Ensure port is passed
+    "-U",  // user
     remote.user,
     "-d",
     remote.database,
     "--no-owner",
     "--clean", // drops existing objects
+    "--if-exists"
   ],
   { env: { ...process.env, PGPASSWORD: remote.password || "" } }
+
+   
 );
 
 // Pipe output of dump into restore
@@ -73,6 +77,7 @@ restore.on("close", (code) => {
   }
 });
 
-// node scripts/seed-db.js \
-//   "local" \
-//   "remote"
+// node scripts/seed-db.js "postgresql://postgres:WehedThninTletha.123@localhost:5432/Test_Qewise"  "postgres://postgres:jUNJGNNT0mXTic3ihb6Da12vqxX1bquiNCWjxmcxqZNMM2ELMsUmuBmsw4mJSMZS@195.35.24.125:2222/postgres"
+
+
+ 
