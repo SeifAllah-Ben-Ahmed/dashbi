@@ -22,16 +22,37 @@ import ScatterCharts from "@/components/charts/scatter-chart";
 import { ChartRadialStacked } from "@/components/charts/chart-radial-stacked";
 import { ChartBarMultiple } from "@/components/charts/chart-bar-multiple";
 import { ChartBar } from "@/components/charts/chart-bar";
+import { SectionCards } from "@/components/section-cards";
+import { ChartPieSimple } from "@/components/charts/chart-pie-simple";
 interface DashProps {
-barTopItems :{ item:string , total_spent :string}[]
-bartopsuppliers:{ supplier:string , total_spent :string}[]
+  barTopItems: { item: string; total_spent: string }[];
+  bartopsuppliers: { supplier: string; total_spent: string }[];
+  pie_top_procurement: any;
+  Tab_mouvement: any;
+  card_full_delivery: any;
+  card_on_time_delivery: any;
+  card_back_order: { com: string; backorder_amnt: number }[];
+  card_recieved_ninvoiced: { com: string; received_not_invoiced: number }[];
+  card_total_spent: { com: string; total_spent: string }[];
 }
- 
-const Dashboard = ({barTopItems,bartopsuppliers}:DashProps) => {
+const Dashboard = ({
+  barTopItems,
+  bartopsuppliers,
+  pie_top_procurement,
+  Tab_mouvement,
+  card_back_order,
+  card_full_delivery,
+  card_on_time_delivery,
+  card_recieved_ninvoiced,
+  card_total_spent,
+}: DashProps) => {
+  console.log(Tab_mouvement);
+
+  console.log({ card_total_spent, card_back_order, card_recieved_ninvoiced });
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      {/* <header className="bg-white border-b border-gray-200">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
@@ -40,25 +61,9 @@ const Dashboard = ({barTopItems,bartopsuppliers}:DashProps) => {
                 Welcome back! Here&apos;s what&apos;s happening today.
               </p>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <button className="p-2 text-gray-400 hover:text-gray-600">
-                <Bell className="h-5 w-5" />
-              </button>
-              <button className="p-2 text-gray-400 hover:text-gray-600">
-                <Calendar className="h-5 w-5" />
-              </button>
-            </div>
           </div>
         </div>
-      </header>
+      </header> */}
 
       {/* Navigation Tabs */}
       <Tabs defaultValue="overview" className="w-full">
@@ -86,20 +91,37 @@ const Dashboard = ({barTopItems,bartopsuppliers}:DashProps) => {
 
         {/* Main Content */}
         <main className="px-6 py-8">
-          <TabsContent
-            value="overview"
-            className="grid items-stretch gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3"
-          >
-            <>
+          <TabsContent value="overview">
+            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+              <SectionCards
+                data={{
+                  card_total_spent,
+                  card_back_order,
+                  card_recieved_ninvoiced,
+                }}
+              />
+            </div>
+            <div className="grid items-stretch gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
               <ChartBarLabelCustom barTopItems={barTopItems} />
-              <ChartBarHorizontal bartopsuppliers={bartopsuppliers} />
+              {pie_top_procurement && (
+                <ChartPieSimple data={pie_top_procurement} />
+              )}
+
+              {bartopsuppliers && (
+                <ChartBarHorizontal
+                  bartopsuppliers={bartopsuppliers?.map((item) => ({
+                    supplier: item.supplier,
+                    total_spent: Number(item.total_spent),
+                  }))}
+                />
+              )}
               <ChartPieDonutText />
               <ChartLineLinear />
               <ChartRadialStacked />
               <ChartBarMultiple />
               <ChartBar />
               <ScatterCharts />
-            </>
+            </div>
           </TabsContent>
 
           {/* <TabsContent value="analytics" className="mt-0">

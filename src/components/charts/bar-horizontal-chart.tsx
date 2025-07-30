@@ -8,6 +8,7 @@ import {
   YAxis,
   CartesianGrid,
   LabelList,
+  ResponsiveContainer,
 } from "recharts";
 
 import {
@@ -24,7 +25,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export const description = "A horizontal bar chart";
 
@@ -44,61 +45,82 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ChartBarHorizontal({bartopsuppliers}:{bartopsuppliers:{ supplier:string , total_spent :string}[]
+export function ChartBarHorizontal({
+  bartopsuppliers,
+}: {
+  bartopsuppliers: {
+    supplier?: string;
+    category?: string;
+    total_spent: number;
+  }[];
 }) {
-  const [longestTick, setLongestTick] = useState("");
-  const getYAxisTickWidth = (): number => {
+  // Support both 'category' and 'supplier' keys for Y axis
+  const yKey =
+    bartopsuppliers && bartopsuppliers.length > 0
+      ? bartopsuppliers[0].category !== undefined
+        ? "category"
+        : "supplier"
+      : "supplier";
+  const longestTick = useMemo(() => {
+    if (!bartopsuppliers || bartopsuppliers.length === 0) return "";
+    return bartopsuppliers.reduce((max, curr) => {
+      const label = curr.category ?? curr.supplier ?? "";
+      return label.length > max.length ? label : max;
+    }, "");
+  }, [bartopsuppliers]);
+
+  const getYAxisTickWidth = () => {
     const charWidth = 9;
+    if (!longestTick || typeof longestTick !== "string") return 50;
     return longestTick.length * charWidth + 15;
   };
-  const tickFormatter = (val: string): string => {
-    const formattedTick = val;
-    if (longestTick.length < formattedTick.length) {
-      setLongestTick(formattedTick);
-    }
-    return formattedTick;
-  };
-  
-   return (
+
+  return (
     <Card>
       <CardHeader>
         <CardTitle>Bar Chart - Horizontal</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
-      <CardContent >
-        <ChartContainer config={chartConfig}>
-          <BarChart
-            accessibilityLayer
-            data={bartopsuppliers}
-            layout="vertical"
-            margin={{
-              left: -20,
-            }}
-          >
+      <CardContent>
+        <ChartContainer
+          config={{
+            [yKey]: {
+              label: yKey,
+              color: "var(--chart-2)",
+            },
+          }}
+        >
+          <BarChart accessibilityLayer data={bartopsuppliers} layout="vertical">
             <CartesianGrid horizontal={false} />
-            <XAxis type="number" dataKey="total_spent" hide />
             <YAxis
-              dataKey="supplier"
+              dataKey={yKey}
               type="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-               width={getYAxisTickWidth()}
-              tick={{ width: 250 }} // Most important part of whitespace formatting
-              tickFormatter={tickFormatter}
+              tickFormatter={(value) => value.slice(0, 3)}
+              // hide
             />
+            <XAxis type="number" dataKey="total_spent" hide />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={<ChartTooltipContent indicator="line" />}
             />
-            <Bar dataKey="supplier" fill="var(--chart-2)" radius={5}>
+            <Bar dataKey="total_spent" fill="var(--chart-2)" radius={4}>
               <LabelList
                 dataKey="total_spent"
-                position="right"
+                position="end"
                 offset={8}
                 className="fill-foreground"
                 fontSize={12}
               />
+              {/* <LabelList
+                dataKey="supplier"
+                position="left"
+                offset={8}
+                className="fill-(--color-label)"
+                fontSize={12}
+              /> */}
             </Bar>
           </BarChart>
         </ChartContainer>
@@ -115,9 +137,12 @@ export function ChartBarHorizontal({bartopsuppliers}:{bartopsuppliers:{ supplier
   );
 }
 
-export function ChartBarLabelCustom({barTopItems}:{barTopItems :{ item:string , total_spent :string}[]}) {
-
-    const [longestTick, setLongestTick] = useState("");
+export function ChartBarLabelCustom({
+  barTopItems,
+}: {
+  barTopItems: { item: string; total_spent: string }[];
+}) {
+  const [longestTick, setLongestTick] = useState("");
   const getYAxisTickWidth = (): number => {
     const charWidth = 9;
     return longestTick.length * charWidth + 15;
@@ -136,7 +161,7 @@ export function ChartBarLabelCustom({barTopItems}:{barTopItems :{ item:string , 
         <CardTitle>Bar Chart - Custom Label</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
-      <CardContent  >
+      <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart
             accessibilityLayer
