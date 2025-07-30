@@ -17,8 +17,8 @@ import { DynamicTable } from "@/components/charts/dynamic-table";
 interface DashProps {
   barTopItems: { item: string; total_spent: string }[];
   bartopsuppliers: { supplier: string; total_spent: string }[];
-  pie_top_procurement: any;
-  Tab_mouvement: any;
+  pie_top_procurement: { category: string; total_spent: string }[];
+  Tab_mouvement: Record<string, Date | string | number>[];
   card_full_delivery: { com: string; otd_fournisseur: string }[];
   card_on_time_delivery: { com: string; otd_fournisseur: string }[];
   card_back_order: { com: string; backorder_amnt: number }[];
@@ -36,6 +36,7 @@ const Dashboard = ({
   card_recieved_ninvoiced,
   card_total_spent,
 }: DashProps) => {
+  console.log({ pie_top_procurement });
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}

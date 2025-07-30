@@ -18,7 +18,7 @@ import {
 import { Card, CardContent, CardFooter } from "../ui/card";
 
 interface DynamicTableProps {
-  data: Record<string, string>[];
+  data: Record<string, Date | string | number>[];
 }
 
 const ROW_HEIGHT = 48; // Height of each row in pixels
@@ -143,9 +143,10 @@ export const DynamicTable = ({ data = [] }: DynamicTableProps) => {
               <TableBody>
                 {visibleData.map((row, index) => {
                   const actualIndex = visibleRange.startIndex + index;
+                  console.log(row.id);
                   return (
                     <TableRow
-                      key={row.id || actualIndex}
+                      key={row.id?.toString() || actualIndex}
                       style={{ height: ROW_HEIGHT }}
                     >
                       {headers.map((header) => (
