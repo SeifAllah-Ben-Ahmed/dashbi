@@ -19,8 +19,8 @@ interface DashProps {
   bartopsuppliers: { supplier: string; total_spent: string }[];
   pie_top_procurement: any;
   Tab_mouvement: any;
-  card_full_delivery: any;
-  card_on_time_delivery: any;
+  card_full_delivery: { com: string; otd_fournisseur: string }[];
+  card_on_time_delivery: { com: string; otd_fournisseur: string }[];
   card_back_order: { com: string; backorder_amnt: number }[];
   card_recieved_ninvoiced: { com: string; received_not_invoiced: number }[];
   card_total_spent: { com: string; total_spent: string }[];
@@ -36,6 +36,7 @@ const Dashboard = ({
   card_recieved_ninvoiced,
   card_total_spent,
 }: DashProps) => {
+  console.log({ card_full_delivery, card_on_time_delivery });
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -79,7 +80,7 @@ const Dashboard = ({
         {/* Main Content */}
         <main className="px-6">
           <TabsContent value="overview">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+            <div className="grid items-stretch gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
               <SectionCards
                 data={{
                   card_total_spent,
@@ -87,8 +88,6 @@ const Dashboard = ({
                   card_recieved_ninvoiced,
                 }}
               />
-            </div>
-            <div className="grid items-stretch gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
               <ChartBarLabelCustom barTopItems={barTopItems} />
               {pie_top_procurement && (
                 <ChartPieSimple data={pie_top_procurement} />
@@ -103,6 +102,12 @@ const Dashboard = ({
                 />
               )}
               <DynamicTable data={Tab_mouvement} />
+              <SectionCards
+                data={{
+                  card_full_delivery,
+                  card_on_time_delivery,
+                }}
+              />
               <ChartPieDonutText />
               <ChartLineLinear />
               <ChartRadialStacked />
