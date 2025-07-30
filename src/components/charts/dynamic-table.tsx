@@ -16,15 +16,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardFooter } from "../ui/card";
+import { cn } from "@/lib/utils";
 
 interface DynamicTableProps {
   data: Record<string, Date | string | number>[];
+  isGrid?: boolean; // Optional prop to render in grid layout
 }
 
 const ROW_HEIGHT = 48; // Height of each row in pixels
 const BUFFER_SIZE = 10; // Extra rows to render outside visible area
 
-export const DynamicTable = ({ data = [] }: DynamicTableProps) => {
+export const DynamicTable = ({ data = [], isGrid }: DynamicTableProps) => {
   const [scrollTop, setScrollTop] = useState(0);
   const [containerHeight, setContainerHeight] = useState(500);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -117,7 +119,7 @@ export const DynamicTable = ({ data = [] }: DynamicTableProps) => {
     <Card className="overflow-hidden h-full w-full">
       <CardContent
         ref={containerRef}
-        // className="h-[500px] overflow-auto"
+        className={cn(!isGrid && "h-[500px] overflow-auto")}
         onScroll={handleScroll}
       >
         {/* Virtual scrolling container */}

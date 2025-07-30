@@ -238,7 +238,7 @@ export default function GridLayout({
           )}
         </div>
         <div className="overflow-hidden" key="dynamic-table">
-          <DynamicTable data={Tab_mouvement} />
+          <DynamicTable data={Tab_mouvement} isGrid />
         </div>
         <Card className="overflow-hidden h-full w-full" key="section-cards-4">
           <CardHeader>

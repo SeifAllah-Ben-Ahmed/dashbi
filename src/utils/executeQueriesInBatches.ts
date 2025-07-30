@@ -112,7 +112,7 @@ LIMIT 3`);
 	montant_ordre
 from mouvement
 where tiers IS NOT NULL`);
-
+  console.log("IS running");
   //PAGE2
   data = {
     pie_top_procurement: pie_top_procurement.rows,
