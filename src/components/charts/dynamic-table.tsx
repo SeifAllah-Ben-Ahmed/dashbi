@@ -114,10 +114,10 @@ export const DynamicTable = ({ data = [] }: DynamicTableProps) => {
   const offsetY = visibleRange.startIndex * ROW_HEIGHT;
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden h-full w-full">
       <CardContent
         ref={containerRef}
-        className="h-[500px] overflow-auto"
+        // className="h-[500px] overflow-auto"
         onScroll={handleScroll}
       >
         {/* Virtual scrolling container */}
@@ -143,7 +143,6 @@ export const DynamicTable = ({ data = [] }: DynamicTableProps) => {
               <TableBody>
                 {visibleData.map((row, index) => {
                   const actualIndex = visibleRange.startIndex + index;
-                  console.log(row.id);
                   return (
                     <TableRow
                       key={row.id?.toString() || actualIndex}

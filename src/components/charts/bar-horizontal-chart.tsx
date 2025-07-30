@@ -26,6 +26,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useMemo, useState } from "react";
+import { cn } from "@/lib/utils";
 
 export const description = "A horizontal bar chart";
 
@@ -53,17 +54,13 @@ export function ChartBarHorizontal({
     total_spent: number;
   }[];
 }) {
-  // Support both 'category' and 'supplier' keys for Y axis
-
-  console.log({ bartopsuppliers });
-
   const maxItemLength = Math.max(
     ...bartopsuppliers.map((item) => item?.supplier?.length)
   );
 
   const leftMargin = Math.max(100, maxItemLength * 8);
   return (
-    <Card>
+    <Card className="h-full w-full">
       <CardHeader>
         <CardTitle>Bar Chart - Horizontal</CardTitle>
         <CardDescription> </CardDescription>
@@ -126,8 +123,10 @@ export function ChartBarHorizontal({
 
 export function ChartBarLabelCustom({
   barTopItems,
+  className = "",
 }: {
   barTopItems: { item: string; total_spent: string }[];
+  className?: string;
 }) {
   const processedData = barTopItems.map((item) => ({
     ...item,
@@ -141,7 +140,7 @@ export function ChartBarLabelCustom({
   const rightMargin = Math.max(100, maxItemLength("total_spent") * 8);
   const leftMargin = Math.max(100, maxItemLength("item") * 8);
   return (
-    <Card>
+    <Card className={cn("h-full w-full", className)}>
       <CardHeader>
         <CardTitle>Bar Chart - Custom Label</CardTitle>
         <CardDescription>January - June 2024</CardDescription>

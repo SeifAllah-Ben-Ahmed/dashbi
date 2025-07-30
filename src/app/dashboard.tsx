@@ -14,6 +14,7 @@ import { ChartBar } from "@/components/charts/chart-bar";
 import { SectionCards } from "@/components/section-cards";
 import { ChartPieSimple } from "@/components/charts/chart-pie-simple";
 import { DynamicTable } from "@/components/charts/dynamic-table";
+
 interface DashProps {
   barTopItems: { item: string; total_spent: string }[];
   bartopsuppliers: { supplier: string; total_spent: string }[];
@@ -36,7 +37,6 @@ const Dashboard = ({
   card_recieved_ninvoiced,
   card_total_spent,
 }: DashProps) => {
-  console.log({ pie_top_procurement });
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}

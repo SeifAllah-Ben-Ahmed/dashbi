@@ -45,7 +45,7 @@ export function ChartPieSimple({
     fill: `var(--color-${item.category.split(" ").join("_")})`,
   }));
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col h-full w-full">
       <CardHeader className="items-center pb-0">
         <CardTitle>Top 5 items</CardTitle>
         <CardDescription></CardDescription>
