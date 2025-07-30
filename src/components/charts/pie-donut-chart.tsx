@@ -115,12 +115,7 @@ export function ChartPieDonutText() {
                 }}
               />
             </Pie>
-            <ChartLegend
-              content={<ChartLegendContent />}
-              onClick={(data) => {
-                console.log("clicked", data);
-              }}
-            />
+            <ChartLegend content={<ChartLegendContent />} />
           </PieChart>
         </ChartContainer>
       </CardContent>

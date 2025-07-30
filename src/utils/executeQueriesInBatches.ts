@@ -53,7 +53,9 @@ export async function executeRawSqlQueries(
   return results;
 }
 
+let data;
 export const sqlQuery = async () => {
+  if (data) return data;
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
   });
@@ -112,7 +114,17 @@ from mouvement
 where tiers IS NOT NULL`);
 
   //PAGE2
-
+  data = {
+    pie_top_procurement: pie_top_procurement.rows,
+    Bar_top_items: Bar_top_items.rows,
+    Bar_top_suppliers: Bar_top_suppliers.rows,
+    card_total_spent: card_total_spent.rows,
+    card_back_order: card_back_order.rows,
+    card_recieved_ninvoiced: card_recieved_ninvoiced.rows,
+    Tab_mouvement: Tab_mouvement.rows,
+    card_on_time_delivery: card_on_time_delivery.rows,
+    card_full_delivery: card_full_delivery.rows,
+  };
   return {
     pie_top_procurement: pie_top_procurement.rows,
     Bar_top_items: Bar_top_items.rows,

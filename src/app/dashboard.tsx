@@ -1,16 +1,5 @@
 "use client";
-import {
-  BarChart3,
-  Users,
-  TrendingUp,
-  DollarSign,
-  Settings,
-  Activity,
-  Calendar,
-  FileText,
-  Bell,
-  Search,
-} from "lucide-react";
+import { BarChart3 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartPieDonutText } from "@/components/charts/pie-donut-chart";
 import {
@@ -24,6 +13,7 @@ import { ChartBarMultiple } from "@/components/charts/chart-bar-multiple";
 import { ChartBar } from "@/components/charts/chart-bar";
 import { SectionCards } from "@/components/section-cards";
 import { ChartPieSimple } from "@/components/charts/chart-pie-simple";
+import { DynamicTable } from "@/components/charts/dynamic-table";
 interface DashProps {
   barTopItems: { item: string; total_spent: string }[];
   bartopsuppliers: { supplier: string; total_spent: string }[];
@@ -46,13 +36,10 @@ const Dashboard = ({
   card_recieved_ninvoiced,
   card_total_spent,
 }: DashProps) => {
-  console.log(Tab_mouvement);
-
-  console.log({ card_total_spent, card_back_order, card_recieved_ninvoiced });
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      {/* <header className="bg-white border-b border-gray-200">
+      <header className="bg-white border-b border-gray-200">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
@@ -63,7 +50,7 @@ const Dashboard = ({
             </div>
           </div>
         </div>
-      </header> */}
+      </header>
 
       {/* Navigation Tabs */}
       <Tabs defaultValue="overview" className="w-full">
@@ -90,7 +77,7 @@ const Dashboard = ({
         </div>
 
         {/* Main Content */}
-        <main className="px-6 py-8">
+        <main className="px-6">
           <TabsContent value="overview">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
               <SectionCards
@@ -115,6 +102,7 @@ const Dashboard = ({
                   }))}
                 />
               )}
+              <DynamicTable data={Tab_mouvement} />
               <ChartPieDonutText />
               <ChartLineLinear />
               <ChartRadialStacked />
