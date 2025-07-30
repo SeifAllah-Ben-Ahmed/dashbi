@@ -72,3 +72,7 @@ restore.on("close", (code) => {
     console.log("✅ Seeding completed successfully!");
   }
 });
+
+// node scripts/seed-db.js \
+//   "local" \
+//   "remote"
