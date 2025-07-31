@@ -133,10 +133,11 @@ const Dashboard = ({
               />
               <SectionCards
                 title="Quality"
+                noFormat
                 data={{
-                  card_Return_total,
-                  card_Returned_Amount,
                   card_Returned_Qty,
+                  card_Returned_Amount,
+                  card_Return_total,
                 }}
               />
               <ChartBarLabelCustom barTopItems={barTopItems} />
@@ -154,7 +155,6 @@ const Dashboard = ({
               <div className="col-span-full">
                 <ChartAreaInteractive area_prix_budget={area_prix_budget} />
               </div>
-
               <div className="col-span-full">
                 <DynamicTable data={Tab_mouvement} />
               </div>

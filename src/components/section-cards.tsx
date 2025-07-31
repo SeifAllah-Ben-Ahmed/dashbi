@@ -20,9 +20,11 @@ interface SectionCardsData {
 export function SectionCards({
   data,
   title,
+  noFormat,
 }: {
   data: SectionCardsData;
   title: string;
+  noFormat?: boolean;
 }) {
   const cardList = Object.keys(data) as Array<keyof SectionCardsData>;
   return (
@@ -42,7 +44,9 @@ export function SectionCards({
               {display?.[keys[0]] ? display?.[keys[0]] + ": " : ""}
             </CardDescription>
             <CardTitle>
-              {!isNaN(Number(display?.[keys[1]]))
+              {noFormat && !isNaN(Number(display?.[keys[1]]))
+                ? display?.[keys[1]] + " To"
+                : !isNaN(Number(display?.[keys[1]]))
                 ? `${formatNumber(Number(display?.[keys[1]]))} TND`
                 : display?.[keys[1]]}
             </CardTitle>
