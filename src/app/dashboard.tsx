@@ -151,11 +151,11 @@ const Dashboard = ({
                   }))}
                 />
               )}
-              <div className="col-span-3">
+              <div className="col-span-full">
                 <ChartAreaInteractive area_prix_budget={area_prix_budget} />
               </div>
 
-              <div className="col-span-2">
+              <div className="col-span-full">
                 <DynamicTable data={Tab_mouvement} />
               </div>
             </div>
