@@ -125,14 +125,14 @@ const Dashboard = ({
                 }}
               />
               <SectionCards
-                title="SPENDING STATS"
+                title="DELIVERY PERFORMANCE"
                 data={{
                   card_full_delivery,
                   card_on_time_delivery,
                 }}
               />
               <SectionCards
-                title="SPENDING STATS"
+                title="Quality"
                 data={{
                   card_Return_total,
                   card_Returned_Amount,
