@@ -1,6 +1,5 @@
 import Dashboard from "./dashboard";
 import { sqlQuery } from "@/utils/executeQueriesInBatches";
-import { Input, SelectFilter } from "./searchInput";
 
 export default async function Home({
   searchParams,

@@ -1,7 +1,7 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useTransition } from "react";
 import {
   Select,
   SelectTrigger,
@@ -38,6 +38,8 @@ export const SelectFilter = ({
   data: string[];
 }) => {
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+
   const router = useRouter();
   const createQueryString = useCallback(
     (val: string, name: string) => {
@@ -50,21 +52,41 @@ export const SelectFilter = ({
   );
   const handleChange = (value: string) => {
     const query = createQueryString(value.trim(), name);
-    router.push(`?${query}`);
+    startTransition(() => {
+      router.push(`?${query}`);
+    });
   };
-
+  console.log({ isPending });
   return (
-    <Select onValueChange={handleChange}>
-      <SelectTrigger>
-        <SelectValue placeholder={`Select ${name}`} />
-      </SelectTrigger>
-      <SelectContent>
-        {data.map((item) => (
-          <SelectItem key={item} value={item}>
-            {item}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <div className="relative flex items-center gap-1.5">
+      <Select onValueChange={handleChange}>
+        <SelectTrigger>
+          <SelectValue placeholder={`Select ${name}`} />
+        </SelectTrigger>
+        <SelectContent>
+          {data.map((item) => (
+            <SelectItem key={item} value={item}>
+              {item}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <SpinnerPinwheelDemo isPending={isPending} />
+    </div>
   );
 };
+import { LoaderPinwheel } from "lucide-react";
+
+export default function SpinnerPinwheelDemo({
+  isPending,
+}: {
+  isPending?: boolean;
+}) {
+  return (
+    <LoaderPinwheel
+      className={`animate-spin ${
+        isPending ? "text-blue-500" : "text-transparent"
+      }`}
+    />
+  );
+}
