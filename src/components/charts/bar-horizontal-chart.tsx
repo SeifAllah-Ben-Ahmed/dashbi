@@ -62,7 +62,7 @@ export function ChartBarHorizontal({
   return (
     <Card className="h-full w-full">
       <CardHeader>
-        <CardTitle>Bar Chart - Horizontal</CardTitle>
+        <CardTitle>Top 3 Suppliers</CardTitle>
         <CardDescription> </CardDescription>
       </CardHeader>
       <CardContent>
@@ -142,8 +142,8 @@ export function ChartBarLabelCustom({
   return (
     <Card className={cn("h-full w-full", className)}>
       <CardHeader>
-        <CardTitle>Bar Chart - Custom Label</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Top 5 items spending</CardTitle>
+        <CardDescription> </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>

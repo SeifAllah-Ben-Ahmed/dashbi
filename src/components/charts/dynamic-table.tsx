@@ -15,7 +15,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent, CardFooter } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 import { cn } from "@/lib/utils";
 
 interface DynamicTableProps {
@@ -117,6 +123,9 @@ export const DynamicTable = ({ data = [], isGrid }: DynamicTableProps) => {
 
   return (
     <Card className="overflow-hidden h-full w-full">
+      <CardHeader>
+        <CardTitle>Procurement Log</CardTitle>
+      </CardHeader>
       <CardContent
         ref={containerRef}
         className={cn(!isGrid && "h-[500px] overflow-auto")}

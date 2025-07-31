@@ -49,7 +49,7 @@ export function ChartPieSimple({
   return (
     <Card className="flex flex-col h-full w-full">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Top 5 items</CardTitle>
+        <CardTitle>Top Procurement Categories</CardTitle>
         <CardDescription></CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
