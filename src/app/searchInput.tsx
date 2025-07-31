@@ -1,7 +1,7 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useCallback, useTransition } from "react";
+import { useCallback, useState, useTransition } from "react";
 import {
   Select,
   SelectTrigger,
@@ -37,8 +37,11 @@ export const SelectFilter = ({
   name: string;
   data: string[];
 }) => {
+  const [key, setKey] = useState(+new Date());
+
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const [selectedValue, setSelectedValue] = useState<string | null>(null);
 
   const router = useRouter();
   const createQueryString = useCallback(
@@ -53,19 +56,18 @@ export const SelectFilter = ({
   const handleChange = (value: string) => {
     const query = createQueryString(value.trim(), name);
     startTransition(() => {
+      setSelectedValue(value || " ");
       router.push(`?${query}`);
     });
   };
   return (
     <div className="relative flex items-center gap-1.5">
-      <Select onValueChange={handleChange}>
+      <Select key={key} onValueChange={handleChange}>
         <SelectTrigger>
-          <SelectValue
-            value={searchParams.get(name) ?? ""}
-            placeholder={`Select ${name}`}
-          />
+          <SelectValue placeholder={`Select ${name}`} />
         </SelectTrigger>
         <SelectContent>
+          <SelectItem value={" "}>{""}</SelectItem>
           {data.map((item) => (
             <SelectItem key={item} value={item}>
               {item}
@@ -73,11 +75,34 @@ export const SelectFilter = ({
           ))}
         </SelectContent>
       </Select>
+      {/* Clear filter button */}
+      {(searchParams.get(name)?.trim() ?? "") !== "" && (
+        <>
+          <Button
+            aria-label={`Clear ${name} filter`}
+            variant="outline"
+            size="icon"
+            className="text-destructive"
+            onClick={() => {
+              const params = new URLSearchParams(searchParams.toString());
+              params.delete(name);
+              startTransition(() => {
+                router.push(`?${params.toString()}`);
+                setKey(+new Date()); // Reset key to re-render Select
+                // setSelectedValue(null); // Clear selected value
+              });
+            }}
+          >
+            <XIcon className="-ms-1 opacity-60" size={16} aria-hidden="true" />
+          </Button>
+        </>
+      )}
       <SpinnerPinwheelDemo isPending={isPending} />
     </div>
   );
 };
-import { LoaderPinwheel } from "lucide-react";
+import { LoaderPinwheel, XIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function SpinnerPinwheelDemo({
   isPending,
