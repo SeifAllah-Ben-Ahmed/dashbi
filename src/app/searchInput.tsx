@@ -56,12 +56,14 @@ export const SelectFilter = ({
       router.push(`?${query}`);
     });
   };
-  console.log({ isPending });
   return (
     <div className="relative flex items-center gap-1.5">
       <Select onValueChange={handleChange}>
         <SelectTrigger>
-          <SelectValue placeholder={`Select ${name}`} />
+          <SelectValue
+            value={searchParams.get(name) ?? ""}
+            placeholder={`Select ${name}`}
+          />
         </SelectTrigger>
         <SelectContent>
           {data.map((item) => (
