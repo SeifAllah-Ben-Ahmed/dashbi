@@ -54,26 +54,28 @@ export async function executeRawSqlQueries(
 }
 
 let data;
-export const sqlQuery = async (fournisseur?:string, year?:string) => {
+export const sqlQuery = async (
+  fournisseur?: string,
+  year?: number | string
+) => {
   if (data) return data;
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
   });
   await client.connect();
-
+  console.log("Filter: ", { fournisseur, year });
   //FILTRE
   //Fournisseur
-   const filtre_fournisseur = fournisseur?`AND f.raison_social = '${fournisseur}'`:''
+  const filtre_fournisseur = fournisseur
+    ? `AND f.raison_social = '${fournisseur}'`
+    : "";
 
   //Fiscal Year
-   const filtre_fiscal_year = year?`AND fiscal_year = 'FY ${year}'`:''
-  
-  
+  const filtre_fiscal_year = year ? `AND fiscal_year = 'FY ${year}'` : "";
+
   //Year
-  const filtre_year = year?`AND year = ${year}`:''
+  const filtre_year = year ? `AND year = ${year}` : "";
 
-
-  console.log( `SELECT 'Total Spent' AS com, SUM(total_spent) AS TOTAL_SPENT  FROM spending_stats  WHERE (1=1) ${filtre_year} ${filtre_fiscal_year}`);
   //PAGE1
   //  Cards (Ligne 1)
   // Spending STATS
@@ -87,16 +89,24 @@ export const sqlQuery = async (fournisseur?:string, year?:string) => {
     `SELECT 'Received not invoiced' AS com, received_not_invoiced FROM spending_stats LIMIT 1`
   );
 
-// DELIVERY PERFORMANCE
-  const card_full_delivery = await client.query(`select 'Full Delivery' AS com, ROUND((Sum(otif)/count(*)) *100,2) ||'%' AS OTD_Fournisseur from delivery_performance WHERE (1=1) ${filtre_year} ${filtre_fiscal_year}`)
-  const card_on_time_delivery = await client.query(`select 'On-Time Delivery' AS com, ROUND((Sum(otd_fournisseur)/count(*)) *100,2) ||'%' AS OTD_Fournisseur from delivery_performance WHERE (1=1) ${filtre_year} ${filtre_fiscal_year}`)
-  
-//Quality
-  const card_Returned_Qty = await client.query(`select 'Returned Qty' AS com, sum(returned_qty)/count(*) AS Returned_qty from quality WHERE (1=1) ${filtre_year} ${filtre_fiscal_year} `)
-  const card_Returned_Amount = await client.query(`select 'Returned Amount' AS com, sum(retourned_amnt)/count(*) AS Retourned_amnt from quality WHERE (1=1) ${filtre_year} ${filtre_fiscal_year} `)
-  const card_Return_total = await client.query(`select 'Return % of Total' AS com, sum(retourned_amnt)/sum(returned_qty) ||'%' AS Retourned_amnt from quality WHERE (1=1) ${filtre_year} ${filtre_fiscal_year}`)
-  
-  
+  // DELIVERY PERFORMANCE
+  const card_full_delivery = await client.query(
+    `select 'Full Delivery' AS com, ROUND((Sum(otif)/count(*)) *100,2) ||'%' AS OTD_Fournisseur from delivery_performance WHERE (1=1) ${filtre_year} ${filtre_fiscal_year}`
+  );
+  const card_on_time_delivery = await client.query(
+    `select 'On-Time Delivery' AS com, ROUND((Sum(otd_fournisseur)/count(*)) *100,2) ||'%' AS OTD_Fournisseur from delivery_performance WHERE (1=1) ${filtre_year} ${filtre_fiscal_year}`
+  );
+
+  //Quality
+  const card_Returned_Qty = await client.query(
+    `select 'Returned Qty' AS com, sum(returned_qty)/count(*) AS Returned_qty from quality WHERE (1=1) ${filtre_year} ${filtre_fiscal_year} `
+  );
+  const card_Returned_Amount = await client.query(
+    `select 'Returned Amount' AS com, sum(retourned_amnt)/count(*) AS Retourned_amnt from quality WHERE (1=1) ${filtre_year} ${filtre_fiscal_year} `
+  );
+  const card_Return_total = await client.query(
+    `select 'Return % of Total' AS com, sum(retourned_amnt)/sum(returned_qty) ||'%' AS Retourned_amnt from quality WHERE (1=1) ${filtre_year} ${filtre_fiscal_year}`
+  );
 
   // chart (Ligne 2)
   const pie_top_procurement =
@@ -119,9 +129,9 @@ GROUP BY supplier
 ORDER BY total_spent desc
 LIMIT 3`);
 
-//Ligne 3
-//Table
-const Tab_mouvement = await client.query(`select 
+  //Ligne 3
+  //Table
+  const Tab_mouvement = await client.query(`select 
 	date_imputation,
 	categorie,
 	article,
@@ -133,10 +143,10 @@ const Tab_mouvement = await client.query(`select
 	montant_ordre
 from mouvement m
 JOIN fournisseur f ON f.Id_Fournisseur = m.Tiers
-WHERE (tiers IS NOT NULL) ${filtre_fournisseur}`)
+WHERE (tiers IS NOT NULL) ${filtre_fournisseur}`);
 
-//Prix budget vs prix unitaire
-const area_prix_budget = await client.query(`SELECT 
+  //Prix budget vs prix unitaire
+  const area_prix_budget = await client.query(`SELECT 
     DATE_TRUNC('month', m.date_imputation) AS month_start,
     SUM(
         CASE 
@@ -156,36 +166,33 @@ FROM mouvement m
 JOIN fournisseur f ON f.Id_Fournisseur = m.Tiers
 JOIN budget_article b ON b.id_article = m.article
 WHERE m.tiers IS NOT NULL
-GROUP BY DATE_TRUNC('month', m.date_imputation) ${filtre_year}`)
+GROUP BY DATE_TRUNC('month', m.date_imputation) `);
 
-//PAGE2
+  //PAGE2
 
+  // const flt_year = await client.query(
+  //   `select distinct(year) from top_supplier_total_spent`
+  // );
 
+  // const flt_frs = await client.query(
+  //   `select raison_social from fournisseur LIMIT 10`
+  // );
 
-
-  const flt_year =
-    await client.query(`select distinct(year) from top_supplier_total_spent`);
-
-  const flt_frs =
-    await client.query(`select raison_social from fournisseur LIMIT 10`);
-console.log({flt_year:flt_year.rows,
-flt_frs:flt_frs.rows});
   const res = {
-  pie_top_procurement:pie_top_procurement.rows, 
-  Bar_top_items:Bar_top_items.rows, 
-  Bar_top_suppliers:Bar_top_suppliers.rows,
-  card_total_spent:card_total_spent.rows,
-  card_back_order:card_back_order.rows,
-  card_recieved_ninvoiced:card_recieved_ninvoiced.rows,
-  Tab_mouvement:Tab_mouvement.rows,
-  card_on_time_delivery:card_on_time_delivery.rows,
-  card_full_delivery:card_full_delivery.rows,
-  card_Returned_Qty:card_Returned_Qty.rows,
-  card_Returned_Amount:card_Returned_Amount.rows,
-  card_Return_total:card_Return_total.rows,
-  area_prix_budget:area_prix_budget.rows
-
-  }
-   client.end();
-   return res;
-} 
+    pie_top_procurement: pie_top_procurement.rows,
+    Bar_top_items: Bar_top_items.rows,
+    Bar_top_suppliers: Bar_top_suppliers.rows,
+    card_total_spent: card_total_spent.rows,
+    card_back_order: card_back_order.rows,
+    card_recieved_ninvoiced: card_recieved_ninvoiced.rows,
+    Tab_mouvement: Tab_mouvement.rows,
+    card_on_time_delivery: card_on_time_delivery.rows,
+    card_full_delivery: card_full_delivery.rows,
+    card_Returned_Qty: card_Returned_Qty.rows,
+    card_Returned_Amount: card_Returned_Amount.rows,
+    card_Return_total: card_Return_total.rows,
+    area_prix_budget: area_prix_budget.rows,
+  };
+  client.end();
+  return res;
+};

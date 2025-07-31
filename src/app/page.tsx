@@ -1,6 +1,6 @@
 import Dashboard from "./dashboard";
 import { sqlQuery } from "@/utils/executeQueriesInBatches";
-import { Input } from "./searchInput";
+import { Input, SelectFilter } from "./searchInput";
 
 export default async function Home({
   searchParams,
@@ -11,6 +11,10 @@ export default async function Home({
   }>;
 }) {
   const search = await searchParams;
+  const fournisseur = (search.fournisseur ?? "").trim();
+
+  const year = (search.year ?? "").trim();
+  const yearNumber = year ? Number(year) : "";
 
   const {
     Bar_top_items,
@@ -22,26 +26,14 @@ export default async function Home({
     card_on_time_delivery,
     card_recieved_ninvoiced,
     card_total_spent,
-  } = await sqlQuery(search.fournisseur?.trim(), search.year?.trim());
-  const data = {
-    year: [{ year: 2023 }, { year: 2024 }, { year: 2025 }],
-    frs: [
-      { raison_social: "PAF" },
-      { raison_social: "CHAFRATUBE" },
-      { raison_social: "SOPEM" },
-      { raison_social: "ALTRAD ASIA" },
-      { raison_social: "SOCIETE ELYES BOIS" },
-      { raison_social: "ENTREPRISE CHAFIK LOUKIL" },
-      { raison_social: "4 M K" },
-      { raison_social: "ZIEGLER TUNISIE" },
-      { raison_social: "ALL SEAS SHIPPING AGENCY" },
-      { raison_social: "C T N" },
-    ],
-  };
+    area_prix_budget,
+    card_Return_total,
+    card_Returned_Amount,
+    card_Returned_Qty,
+  } = await sqlQuery(fournisseur, yearNumber);
+
   return (
     <div className="space-y-6">
-      <Input name="fournisseur" />
-      <Input name="year" />
       <Dashboard
         barTopItems={Bar_top_items}
         bartopsuppliers={Bar_top_suppliers}
@@ -52,6 +44,10 @@ export default async function Home({
         card_on_time_delivery={card_on_time_delivery}
         card_recieved_ninvoiced={card_recieved_ninvoiced}
         card_total_spent={card_total_spent}
+        area_prix_budget={area_prix_budget}
+        card_Return_total={card_Return_total}
+        card_Returned_Amount={card_Returned_Amount}
+        card_Returned_Qty={card_Returned_Qty}
       />
     </div>
   );

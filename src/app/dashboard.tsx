@@ -14,6 +14,8 @@ import { ChartBar } from "@/components/charts/chart-bar";
 import { SectionCards } from "@/components/section-cards";
 import { ChartPieSimple } from "@/components/charts/chart-pie-simple";
 import { DynamicTable } from "@/components/charts/dynamic-table";
+import { ChartAreaInteractive } from "@/components/charts/chart-area-interactive";
+import { SelectFilter } from "./searchInput";
 
 interface DashProps {
   barTopItems: { item: string; total_spent: string }[];
@@ -25,6 +27,15 @@ interface DashProps {
   card_back_order: { com: string; backorder_amnt: number }[];
   card_recieved_ninvoiced: { com: string; received_not_invoiced: number }[];
   card_total_spent: { com: string; total_spent: string }[];
+  area_prix_budget: {
+    month_start: Date;
+    prix_total: string;
+    prix_budget: string;
+  }[];
+  card_Return_total: { com: string; returned_amnt: string }[];
+  card_Returned_Amount: { com: string; returned_amnt: string }[];
+
+  card_Returned_Qty: { com: string; returned_qty: string }[];
 }
 const Dashboard = ({
   barTopItems,
@@ -36,7 +47,26 @@ const Dashboard = ({
   card_on_time_delivery,
   card_recieved_ninvoiced,
   card_total_spent,
+  card_Return_total,
+  card_Returned_Amount,
+  card_Returned_Qty,
+  area_prix_budget,
 }: DashProps) => {
+  const data = {
+    year: ["2023", "2024", "2025"],
+    frs: [
+      "PAF",
+      "CHAFRATUBE",
+      "SOPEM",
+      "ALTRAD ASIA",
+      "SOCIETE ELYES BOIS",
+      "ENTREPRISE CHAFIK LOUKIL",
+      "4 M K",
+      "ZIEGLER TUNISIE",
+      "ALL SEAS SHIPPING AGENCY",
+      "C T N",
+    ],
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -79,19 +109,38 @@ const Dashboard = ({
         {/* Main Content */}
         <main className="px-6">
           <TabsContent value="overview">
+            <div className="flex items-center gap-2.5 mb-6 bg-white p-4 rounded-md shadow-sm sticky top-0 z-10">
+              <SelectFilter name="fournisseur" data={data.frs} />
+              <SelectFilter name="year" data={data.year} />
+            </div>
             <div className="grid items-stretch gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
               <SectionCards
+                title="SPENDING STATS"
                 data={{
                   card_total_spent,
                   card_back_order,
                   card_recieved_ninvoiced,
                 }}
               />
+              <SectionCards
+                title="SPENDING STATS"
+                data={{
+                  card_full_delivery,
+                  card_on_time_delivery,
+                }}
+              />
+              <SectionCards
+                title="SPENDING STATS"
+                data={{
+                  card_Return_total,
+                  card_Returned_Amount,
+                  card_Returned_Qty,
+                }}
+              />
               <ChartBarLabelCustom barTopItems={barTopItems} />
               {pie_top_procurement && (
                 <ChartPieSimple data={pie_top_procurement} />
               )}
-
               {bartopsuppliers && (
                 <ChartBarHorizontal
                   bartopsuppliers={bartopsuppliers?.map((item) => ({
@@ -100,16 +149,12 @@ const Dashboard = ({
                   }))}
                 />
               )}
+              <div className="col-span-3">
+                <ChartAreaInteractive area_prix_budget={area_prix_budget} />
+              </div>
+
               <div className="col-span-2">
                 <DynamicTable data={Tab_mouvement} />
-              </div>
-              <div className="grid gap-10 md:gap-6 self-start">
-                <SectionCards
-                  data={{
-                    card_full_delivery,
-                    card_on_time_delivery,
-                  }}
-                />
               </div>
             </div>
           </TabsContent>
